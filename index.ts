@@ -18,6 +18,9 @@ export interface IMeta {
   fallback?: Array<string>;
 }
 
+/**
+ * Throw error for undefined and null values or returns the value.
+ */
 export function unwrap<T>(v: T | undefined | null): T {
   if (v === undefined || v === null) {
     throw new Error("missing value");
@@ -33,6 +36,9 @@ export function splitByUrl(str: string): string[] {
 }
 
 
+/**
+ * Removes undefined values in the provided array and throws for any nulls.
+ */
 export function removeUndefined<T>(v: Array<T | undefined>): T[] {
   return v.filter(a => a !== undefined).map(a => unwrap(a));
 }
@@ -57,6 +63,9 @@ export interface ParsedFragment {
 
 export type Fragment = string | ParsedFragment;
 
+/**
+ * Extract links.
+ */
 function extractLinks(fragments: Fragment[]) {
   return fragments
     .map(f => {
@@ -131,6 +140,9 @@ function extractLinks(fragments: Fragment[]) {
     .flat();
 }
 
+/**
+ * Extract mentions.
+ */
 function extractMentions(fragments: Fragment[]) {
   return fragments
     .map(f => {
@@ -151,6 +163,9 @@ function extractMentions(fragments: Fragment[]) {
     .flat();
 }
 
+/**
+ * Extract cashu tokens.
+ */
 function extractCashuTokens(fragments: Fragment[]) {
   return fragments
     .map(f => {
@@ -167,6 +182,9 @@ function extractCashuTokens(fragments: Fragment[]) {
     .flat();
 }
 
+/**
+ * Extract lightning invoices.
+ */
 function extractInvoices(fragments: Fragment[]) {
   return fragments
     .map(f => {
@@ -187,6 +205,9 @@ function extractInvoices(fragments: Fragment[]) {
     .flat();
 }
 
+/**
+ * Extract hastags.
+ */
 function extractHashtags(fragments: Fragment[]) {
   return fragments
     .map(f => {
@@ -207,6 +228,9 @@ function extractHashtags(fragments: Fragment[]) {
     .flat();
 }
 
+/**
+ * Extract tag references.
+ */
 function extractTagRefs(fragments: Fragment[], tags: Array<Array<string>>) {
   return fragments
     .map(f => {
@@ -233,6 +257,9 @@ function extractTagRefs(fragments: Fragment[], tags: Array<Array<string>>) {
     .flat();
 }
 
+/**
+ * Extract custom emojis.
+ */
 function extractCustomEmoji(fragments: Fragment[], tags: Array<Array<string>>): (string | ParsedFragment)[] {
   return fragments
     .map(f => {
@@ -254,6 +281,9 @@ function extractCustomEmoji(fragments: Fragment[], tags: Array<Array<string>>): 
     .flat();
 }
 
+/**
+ * Extract markdown code blocks.
+ */
 function extractMarkdownCode(fragments: Fragment[]): (string | ParsedFragment)[] {
   return fragments
     .map(f => {
@@ -279,6 +309,9 @@ function extractMarkdownCode(fragments: Fragment[]): (string | ParsedFragment)[]
     .flat();
 }
 
+/**
+ * Extract inline meta information.
+ */
 export function parseIMeta(tags: Array<Array<string>>): Record<string, IMeta> | undefined {
   let ret: Record<string, IMeta> | undefined;
   const imetaTags = tags.filter(a => a[0] === "imeta");
@@ -311,6 +344,9 @@ export function parseIMeta(tags: Array<Array<string>>): Record<string, IMeta> | 
   return ret;
 }
 
+/**
+ * Parse inline meta information.
+ */
 export function parseInlineMetaHack(u: URL): IMeta | undefined {
   if (u.hash) {
     const params = new URLSearchParams(u.hash.substring(1));
@@ -330,6 +366,9 @@ export function parseInlineMetaHack(u: URL): IMeta | undefined {
   }
 }
 
+/**
+ * Parse nostr event content and tags into rich fragments.
+ */
 export function transformText(body: string, tags: Array<Array<string>>): ParsedFragment[] {
   let fragments = extractLinks([body]);
   fragments = extractMentions(fragments);
